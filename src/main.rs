@@ -17,7 +17,7 @@ mod schema;
 mod insertables;
 
 use db_utils::{get_pool, AppState, DbActor};
-use services::{create_user_article, fetch_user_articles, fetch_users};
+use services::{create_user_article, fetch_user_articles, fetch_users, update_post};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -39,6 +39,7 @@ async fn main() -> std::io::Result<()> {
             .service(fetch_users)
             .service(fetch_user_articles)
             .service(create_user_article)
+            .service(update_post)
             .wrap(Logger::default())
     })
     .bind(("127.0.0.1", 8080))?

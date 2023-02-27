@@ -19,3 +19,12 @@ pub struct CreatePost {
   pub body: String,
   pub published: bool,
 }
+
+#[derive(Message)]
+#[rtype(result = "QueryResult<Post>")]
+pub struct UpdatePost {
+  pub post_id: i32,
+  pub title: String,
+  pub body: String,
+  pub published: bool,
+}

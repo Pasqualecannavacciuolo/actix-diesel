@@ -1,11 +1,11 @@
 use actix_web::{
-    get, post,
+    get, post, put,
     web::{Data, Json, Path},
-    Responder, HttpResponse,
+    Responder, HttpResponse
 };
 use serde::Deserialize;
 use crate::{
-    messages::{FetchPosts, FetchSinglePost, CreatePost},
+    messages::{FetchPosts, FetchSinglePost, CreatePost, UpdatePost},
     AppState, DbActor
 };
 use actix::Addr;
@@ -17,9 +17,11 @@ pub struct CreatePostBody {
     pub published: bool
 }
 
+
 #[get("/posts")]
 pub async fn fetch_users(state: Data<AppState>) -> impl Responder {
     // "GET /users".to_string()
+    println!("Fetch all");
     let db: Addr<DbActor> = state.as_ref().db.clone();
 
     match db.send(FetchPosts).await {
@@ -29,9 +31,11 @@ pub async fn fetch_users(state: Data<AppState>) -> impl Responder {
     }
 }
 
+
 #[get("/post/{id}")]
 pub async fn fetch_user_articles(state: Data<AppState>, path: Path<i32>) -> impl Responder {
     let id: i32 = path.into_inner();
+    println!("Fetch by id {}", id);
     // format!("GET /users/{id}/articles")
 
     let db: Addr<DbActor> = state.as_ref().db.clone();
@@ -42,6 +46,7 @@ pub async fn fetch_user_articles(state: Data<AppState>, path: Path<i32>) -> impl
         _ => HttpResponse::InternalServerError().json("Unable to retrieve the post"),
     }
 }
+
 
 #[post("/createPost")]
 pub async fn create_user_article(state: Data<AppState>, body: Json<CreatePostBody>) -> impl Responder {
@@ -58,4 +63,23 @@ pub async fn create_user_article(state: Data<AppState>, body: Json<CreatePostBod
         Ok(Ok(info)) => HttpResponse::Ok().json(info),
         _ => HttpResponse::InternalServerError().json("Failed to create post"),
     }
+}
+
+
+#[put("post/{id}")]
+pub async fn update_post(state: Data<AppState>, body: Json<CreatePostBody>, path: Path<i32>) -> impl Responder {
+    let id: i32 = path.into_inner();   
+    println!("Update");
+    let db: Addr<DbActor> = state.as_ref().db.clone();
+
+    match db.send(UpdatePost { 
+        post_id: id,
+        title: body.title.to_string(),
+        body: body.body.to_string(),
+        published: body.published 
+    }).await {
+        Ok(Ok(info)) => HttpResponse::Ok().json(info),
+        Ok(Err(_)) => HttpResponse::NotFound().json("No post has this ID"),
+        _ => HttpResponse::InternalServerError().json("Unable to retrieve the post"),
+    } 
 }

@@ -1,7 +1,7 @@
-use crate::db_models::{Post};
+use crate::db_models::Post;
 use crate::db_utils::DbActor;
 use crate::schema::posts::dsl::*;
-use crate::messages::{FetchPosts, FetchSinglePost, CreatePost};
+use crate::messages::{FetchPosts, FetchSinglePost, CreatePost, UpdatePost};
 use crate::insertables::NewPost;
 use actix::Handler;
 use diesel::{self, prelude::*};
@@ -16,6 +16,7 @@ impl Handler<FetchPosts> for DbActor {
   }
 }
 
+
 impl Handler<FetchSinglePost> for DbActor {
   type Result = QueryResult<Post>;
 
@@ -25,6 +26,7 @@ impl Handler<FetchSinglePost> for DbActor {
     posts.filter(id.eq(msg.post_id)).get_result::<Post>(&mut conn)
   }
 }
+
 
 impl Handler<CreatePost> for DbActor {
   type Result = QueryResult<Post>;
@@ -47,5 +49,19 @@ impl Handler<CreatePost> for DbActor {
         published,
       ))
       .get_result::<Post>(&mut conn)
+  }
+}
+
+
+impl Handler<UpdatePost> for DbActor {
+  type Result = QueryResult<Post>;
+
+  fn handle(&mut self, msg: UpdatePost, _ctx: &mut Self::Context) -> Self::Result {
+    let mut conn = self.0.get().expect("Update Post: Unable to establish connection");
+
+    diesel::update(posts.filter(id.eq(msg.post_id as i32)))
+    .set((title.eq(msg.title), body.eq(msg.body), published.eq(msg.published)))
+    .get_result::<Post>(&mut conn)
+
   }
 }
