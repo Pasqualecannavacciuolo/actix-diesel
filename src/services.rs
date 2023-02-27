@@ -19,7 +19,7 @@ pub struct CreatePostBody {
 
 
 #[get("/posts")]
-pub async fn fetch_users(state: Data<AppState>) -> impl Responder {
+pub async fn fetch_posts(state: Data<AppState>) -> impl Responder {
     // "GET /users".to_string()
     println!("Fetch all");
     let db: Addr<DbActor> = state.as_ref().db.clone();
@@ -33,7 +33,7 @@ pub async fn fetch_users(state: Data<AppState>) -> impl Responder {
 
 
 #[get("/post/{id}")]
-pub async fn fetch_user_articles(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+pub async fn fetch_single_post(state: Data<AppState>, path: Path<i32>) -> impl Responder {
     let id: i32 = path.into_inner();
     println!("Fetch by id {}", id);
     // format!("GET /users/{id}/articles")
@@ -49,7 +49,7 @@ pub async fn fetch_user_articles(state: Data<AppState>, path: Path<i32>) -> impl
 
 
 #[post("/createPost")]
-pub async fn create_user_article(state: Data<AppState>, body: Json<CreatePostBody>) -> impl Responder {
+pub async fn create_post(state: Data<AppState>, body: Json<CreatePostBody>) -> impl Responder {
     // format!("POST /users/{id}/articles")
 
     let db: Addr<DbActor> = state.as_ref().db.clone();
