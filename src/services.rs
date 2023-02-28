@@ -1,11 +1,17 @@
 use actix_web::{
-    get, post, put,
+    get, post, put, delete,
     web::{Data, Json, Path},
     Responder, HttpResponse
 };
 use serde::{Deserialize, Serialize};
 use crate::{
-    messages::{FetchPosts, FetchSinglePost, CreatePost, UpdatePost},
+    messages::{
+        FetchPosts, 
+        FetchSinglePost, 
+        CreatePost, 
+        UpdatePost,
+        DeletePost
+    },
     AppState, DbActor
 };
 use actix::Addr;
@@ -100,4 +106,18 @@ pub async fn update_post(state: Data<AppState>, body: Json<CreatePostBody>, path
         Ok(Err(_)) => HttpResponse::NotFound().json("No post has this ID"),
         _ => HttpResponse::InternalServerError().json("Unable to retrieve the post"),
     } 
+}
+
+
+#[delete("/post/{id}")]
+pub async fn delete_post(state: Data<AppState>, path: Path<i32>) -> impl Responder {
+    let id: i32 = path.into_inner();
+    println!("{}", id);
+    let db: Addr<DbActor> = state.as_ref().db.clone();
+
+    match db.send(DeletePost { post_id: id }).await {
+        Ok(Ok(info)) => HttpResponse::Ok().json(info),
+        Ok(Err(_)) => HttpResponse::NotFound().json(format!("No post has this ID: {id}")),
+        _ => HttpResponse::InternalServerError().json("Unable to retrieve the post"),
+    }
 }

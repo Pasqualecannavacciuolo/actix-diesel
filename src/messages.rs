@@ -28,3 +28,9 @@ pub struct UpdatePost {
   pub body: String,
   pub published: bool,
 }
+
+#[derive(Message)]
+#[rtype(result = "QueryResult<Post>")]
+pub struct DeletePost {
+  pub post_id: i32,
+}

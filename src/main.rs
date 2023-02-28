@@ -22,7 +22,9 @@ use services::{
     create_post, 
     fetch_single_post, 
     fetch_posts, 
-    update_post};
+    update_post,
+    delete_post
+};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -46,6 +48,7 @@ async fn main() -> std::io::Result<()> {
             .service(fetch_single_post)
             .service(create_post)
             .service(update_post)
+            .service(delete_post)
             .wrap(Logger::default())
     })
     .bind(("127.0.0.1", 8080))?
