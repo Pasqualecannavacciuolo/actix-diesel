@@ -3,7 +3,7 @@ use actix_web::{
     web::{Data, Json, Path},
     Responder, HttpResponse
 };
-use serde::Deserialize;
+use serde::{Deserialize, Serialize};
 use crate::{
     messages::{FetchPosts, FetchSinglePost, CreatePost, UpdatePost},
     AppState, DbActor
@@ -15,6 +15,24 @@ pub struct CreatePostBody {
     pub title: String,
     pub body: String,
     pub published: bool
+}
+
+#[derive(Serialize)]
+pub struct GenericResponse {
+    pub status: String,
+    pub message: String,
+}
+
+
+#[get("/healthChecker")]
+pub async fn health_checker() -> impl Responder {
+    const MESSAGE: &str = "Tutto funziona";
+
+    let response_json = &GenericResponse {
+        status: "success".to_string(),
+        message: MESSAGE.to_string(),
+    };
+    HttpResponse::Ok().json(response_json)
 }
 
 
