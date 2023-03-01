@@ -1,4 +1,4 @@
-use crate::db_models::{Post};
+use crate::db_models::{Post, User};
 use actix::Message;
 use diesel::QueryResult;
 
@@ -33,4 +33,19 @@ pub struct UpdatePost {
 #[rtype(result = "QueryResult<Post>")]
 pub struct DeletePost {
   pub post_id: i32,
+}
+
+
+#[derive(Message)]
+#[rtype(result = "QueryResult<User>")]
+pub struct CreateUser {
+  pub username: String,
+  pub pwd: String,
+}
+
+
+#[derive(Message)]
+#[rtype(result = "QueryResult<User>")]
+pub struct FetchSingleUser {
+  pub username: String,
 }

@@ -12,3 +12,10 @@ pub struct Post {
     pub body: String,
     pub published: bool,
 }
+
+#[derive(Queryable, Debug, Serialize)]
+pub struct User {
+    pub id: i32,
+    pub username: String,
+    pub pwd: String,
+}
