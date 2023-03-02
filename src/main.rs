@@ -41,7 +41,7 @@ use services::{
     update_post,
 };
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct TokenClaims {
     id: i32,
 }
