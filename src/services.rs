@@ -188,7 +188,7 @@ pub async fn update_post(
 ) -> impl Responder {
     println!("{:?}", req_user);
     match req_user {
-        Some(user) => {
+        Some(_user) => {
             let id: i32 = path.into_inner();
             println!("Update Post");
             let db: Addr<DbActor> = state.as_ref().db.clone();
